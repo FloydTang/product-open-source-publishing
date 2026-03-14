@@ -1,7 +1,8 @@
 ---
 name: product-open-source-publishing
 description: |
-  产品开源发布标准化流程。当九两确认"产品可以开源"后，执行完整的产品开源流程：
+  产品开源发布标准化流程。**由 Forge 主要执行**。
+  当九两确认"产品可以开源"后，Forge 调用此 Skill 执行完整的产品开源流程：
   1. 按格式写入产品库文档
   2. 同步到 GitHub bjjl-knowledge-base 仓库
   3. 按标准创建开源仓库并发布
@@ -98,9 +99,9 @@ git push -u origin main
 
 ---
 
-### 阶段三：更新产品库
+### 阶段三：更新索引（两处）
 
-#### 3.1 更新仓库链接
+#### 3.1 更新产品库
 
 编辑 `半斤九两品牌库/开源产品/产品库.md`：
 
@@ -109,7 +110,18 @@ git push -u origin main
 - **状态**: ✅ 已发布
 ```
 
-#### 3.2 推送到 GitHub
+#### 3.2 同步到工具库（Skill 类产品必做）
+
+如果发布的是 AgentSkill：
+
+1. 复制 Skill 目录到 `MarsStudio/工具库/自用Skill/`
+2. 更新 `MarsStudio/工具库/工具库索引.md`：
+   - 在「已开源项目」表格新增一行
+   - 在「自用 Skill」表格新增一行
+
+如果发布的是独立工具（非 Skill），只更新工具库索引的「已开源项目」表格。
+
+#### 3.3 推送到 GitHub
 
 ```bash
 git add -A
@@ -175,15 +187,63 @@ pip install -r requirements.txt
 ## 完整检查清单
 
 - [ ] 确认九两说"可以开源"
-- [ ] 产品写入产品库文档
-- [ ] 产品库推送到 GitHub
+- [ ] 产品写入产品库文档（`半斤九两品牌库/开源产品/产品库.md`）
 - [ ] 创建开源仓库
-- [ ] README.md 符合标准
+- [ ] **README.md 存在且符合标准** ← 重点检查！
 - [ ] requirements.txt 存在（如适用）
 - [ ] 代码推送到开源仓库
 - [ ] 更新产品库状态为"已发布"
-- [ ] 产品库推送到 GitHub
+- [ ] **Skill 类：复制到 `MarsStudio/工具库/自用Skill/`**
+- [ ] **更新 `MarsStudio/工具库/工具库索引.md`**
+- [ ] knowledge-base 推送到 GitHub
+
+---
+
+## ⚠️ 常见错误（重点记录）
+
+### 问题：发布时忘记添加 README.md
+
+**历史出现次数**：2 次
+- 第1次：bjjl-content-pipeline、forge-github-tools-radar 首次发布
+- 第2次：product-open-source-publishing 首次发布
+
+**根本原因**：直接推送 SKILL.md，忽略了 README.md
+
+**解决方案**：
+1. 创建临时目录准备仓库内容时，必须包含 README.md
+2. README.md 必须参考 Memory Engine 标准
+3. 推送前必须检查：ls -la 确认文件完整
 
 ---
 
 *标准化流程 | 版本 1.0 | 2026-03-13*
+
+---
+
+## 👤 执行者
+
+**主要执行者**：Forge
+
+**职责说明**：
+- 当九两确认"产品可以开源"时，由 Forge 调用此 Skill
+- Forge 负责完整的开源发布流程
+- Mars 不再直接执行开源发布
+
+**调用方式**：
+```bash
+# Forge 调用此 Skill
+sessions_spawn(
+    agentId="forge",
+    task="执行 product-open-source-publishing Skill，完成产品开源发布..."
+)
+```
+
+---
+
+## 📖 必读文件
+
+执行此 Skill 前，Forge 必须先读取以下文件：
+
+- `memory_topics_github_automation.md` — GitHub 自动化相关规范与历史错误记录
+
+**历史错误是前车之鉴，执行前必读！**
